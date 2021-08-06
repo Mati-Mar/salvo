@@ -1,7 +1,5 @@
 package com.codeoftheweb.salvo;
 
-
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
