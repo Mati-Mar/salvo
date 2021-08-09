@@ -18,8 +18,6 @@ public class SalvoApplication {
 	public CommandLineRunner initData(PlayerRepository playerRepository, GameRepository gameRepository, GamePlayerRepository gameplayerRepository) {
 		return (args) -> {
 
-
-
 			Player player1 = new Player("j.bauer@ctu.gov");
 			Player player2 = new Player("c.obrian@ctu.gov");
 			Player player3 = new Player("t.almeida@ctu.gov");
