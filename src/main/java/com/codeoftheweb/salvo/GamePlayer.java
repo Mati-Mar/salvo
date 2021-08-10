@@ -63,7 +63,7 @@ public class GamePlayer {
 
         Map <String, Object> dto = new LinkedHashMap<>();
         dto.put("id", this.getId());
-        dto.put("email",this.getPlayerID().makePlayerDTO() );
+        dto.put("player",this.getPlayerID().makePlayerDTO() );
 
         return dto;
 
