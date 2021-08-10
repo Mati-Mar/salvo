@@ -24,14 +24,8 @@ public class Game {
     @GenericGenerator(name = "native", strategy = "native")
     private Long id;
 
-
     @OneToMany(mappedBy = "gameID", fetch = FetchType.EAGER)
     Set<GamePlayer> gamePlayers;
-
-/*    public void addGamePlayer(GamePlayer gameplayer) {
-        gamePlayer.setGameID(this);
-        gamePlayers.add(gamePlayer);
-     } */
 
     private LocalDateTime creationDate;
 

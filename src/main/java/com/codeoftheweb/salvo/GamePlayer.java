@@ -1,11 +1,16 @@
 package com.codeoftheweb.salvo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import static java.util.stream.Collectors.toList;
 
 @Entity
 public class GamePlayer {
@@ -24,6 +29,9 @@ public class GamePlayer {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="player_id")
     private Player playerID;
+
+    @OneToMany(mappedBy="gamePlayerID", fetch=FetchType.EAGER)
+    Set<Ship> ships;
 
 
     public GamePlayer() { } /*Siempre constructor vacío*/
@@ -76,4 +84,18 @@ public class GamePlayer {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public Set<Ship> getShips() {
+        return ships;
+    }
+
+    public void setShips(Set<Ship> ships) {
+        this.ships = ships;
+    }
+
+    //@JsonIgnore
+    //public List<Ship> getShips() {
+    //    return ships.stream().map(gamePlayer -> gamePlayer.getShips()).collect(toList());
+    //}
+
 }
