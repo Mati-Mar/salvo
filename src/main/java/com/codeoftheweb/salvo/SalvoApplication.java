@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 @SpringBootApplication
 public class SalvoApplication {
@@ -16,7 +17,7 @@ public class SalvoApplication {
 
 
 	@Bean
-	public CommandLineRunner initData(PlayerRepository playerRepository, GameRepository gameRepository, GamePlayerRepository gameplayerRepository) {
+	public CommandLineRunner initData(PlayerRepository playerRepository, GameRepository gameRepository, GamePlayerRepository gameplayerRepository, ShipRepository shipRepository) {
 		return (args) -> {
 
 			Player player1 = new Player("j.bauer@ctu.gov");
@@ -72,6 +73,13 @@ public class SalvoApplication {
 			gameplayerRepository.save(gameplayer10);
 			gameplayerRepository.save(gameplayer11);
 
+			Ship ship1 = new Ship("Destroyer", gameplayer1, Arrays.asList("H1","H2"));
+			Ship ship2 = new Ship("Cruiser", gameplayer1, Arrays.asList("H1","H2","H3"));
+
+
+
+			shipRepository.save(ship1);
+			shipRepository.save(ship2);
 
 
 		};

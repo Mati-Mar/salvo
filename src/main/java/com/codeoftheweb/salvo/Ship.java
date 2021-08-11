@@ -19,8 +19,8 @@ public class Ship {
     private String type;
 
     @ElementCollection
-    @Column (name="")
-    private List<String> locations  = new ArrayList<>();
+    @Column (name="shipLocation")
+    private List<String> shipLocation  = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="gamePlayer_id")
@@ -29,9 +29,12 @@ public class Ship {
 
     public Ship() { }
 
-    public Ship(GamePlayer gamePlayerID) {
+    public Ship(String type, GamePlayer gamePlayerID, List<String> shipLocation,) {
+        this.type = type;
         this.gamePlayerID = gamePlayerID;
+        this.shipLocation = shipLocation;
     }
+
 
     public GamePlayer getGamePlayerID() {
         return gamePlayerID;
@@ -39,10 +42,6 @@ public class Ship {
 
     public void setGamePlayerID(GamePlayer gamePlayerID) {
         this.gamePlayerID = gamePlayerID;
-    }
-
-    public Ship(List<String> locations) {
-        this.locations = locations;
     }
 
     public Long getId() {
@@ -61,18 +60,13 @@ public class Ship {
         this.type = type;
     }
 
-    public List<String> getLocations() {
-        return locations;
+    public List<String> getShipLocation() {
+        return shipLocation;
     }
 
-    public void setLocations(List<String> locations) {
-        this.locations = locations;
+    public void setShipLocation(List<String> shipLocation) {
+        this.shipLocation = shipLocation;
     }
-
-    //@JsonIgnore
-    //public List<GamePlayer> getGamePlayers() {
-    //    return gamePlayers.stream().map(ship -> ship.getGamePlayer()).collect(toList());
-    //}
 
 
 }
