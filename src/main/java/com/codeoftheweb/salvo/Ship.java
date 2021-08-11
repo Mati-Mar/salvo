@@ -5,7 +5,10 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -23,18 +26,25 @@ public class Ship {
     private List<String> shipLocation  = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="gamePlayer_id")
+    @JoinColumn(name="gamePlayerID")
     private GamePlayer gamePlayerID;
-
 
     public Ship() { }
 
-    public Ship(String type, GamePlayer gamePlayerID, List<String> shipLocation,) {
+    public Ship(String type, GamePlayer gamePlayerID, List<String> shipLocation) {
         this.type = type;
         this.gamePlayerID = gamePlayerID;
         this.shipLocation = shipLocation;
     }
 
+    public Map<String, Object> makeShipDTO() {
+
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("type" , this.getType());
+        dto.put("location" , this.getShipLocation());
+
+        return dto;
+    }
 
     public GamePlayer getGamePlayerID() {
         return gamePlayerID;
@@ -67,6 +77,8 @@ public class Ship {
     public void setShipLocation(List<String> shipLocation) {
         this.shipLocation = shipLocation;
     }
+
+
 
 
 }

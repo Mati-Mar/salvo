@@ -44,43 +44,40 @@ public class SalvoApplication {
 			gameRepository.save(game5);
 			gameRepository.save(game6);
 
-			GamePlayer gameplayer1 = new GamePlayer(game1, player1, LocalDateTime.now());
-			GamePlayer gameplayer2 = new GamePlayer(game1, player2, LocalDateTime.now());
+			GamePlayer gamePlayer1 = new GamePlayer(game1, player1, LocalDateTime.now());
+			GamePlayer gamePlayer2 = new GamePlayer(game1, player2, LocalDateTime.now());
 
-			GamePlayer gameplayer3 = new GamePlayer(game2, player1, LocalDateTime.now().plusHours(1));
-			GamePlayer gameplayer4 = new GamePlayer(game2, player2, LocalDateTime.now().plusHours(1));
+			GamePlayer gamePlayer3 = new GamePlayer(game2, player1, LocalDateTime.now().plusHours(1));
+			GamePlayer gamePlayer4 = new GamePlayer(game2, player2, LocalDateTime.now().plusHours(1));
 
-			GamePlayer gameplayer5 = new GamePlayer(game3, player2, LocalDateTime.now().plusHours(2));
-			GamePlayer gameplayer6 = new GamePlayer(game3, player3, LocalDateTime.now().plusHours(2));
+			GamePlayer gamePlayer5 = new GamePlayer(game3, player2, LocalDateTime.now().plusHours(2));
+			GamePlayer gamePlayer6 = new GamePlayer(game3, player3, LocalDateTime.now().plusHours(2));
 
-			GamePlayer gameplayer7 = new GamePlayer(game4, player1, LocalDateTime.now().plusHours(3));
-			GamePlayer gameplayer8 = new GamePlayer(game4, player2, LocalDateTime.now().plusHours(3));
+			GamePlayer gamePlayer7 = new GamePlayer(game4, player1, LocalDateTime.now().plusHours(3));
+			GamePlayer gamePlayer8 = new GamePlayer(game4, player2, LocalDateTime.now().plusHours(3));
 
-			GamePlayer gameplayer9 = new GamePlayer(game5, player3, LocalDateTime.now().plusHours(4));
-			GamePlayer gameplayer10 = new GamePlayer(game5, player1, LocalDateTime.now().plusHours(4));
+			GamePlayer gamePlayer9 = new GamePlayer(game5, player3, LocalDateTime.now().plusHours(4));
+			GamePlayer gamePlayer10 = new GamePlayer(game5, player1, LocalDateTime.now().plusHours(4));
 
-			GamePlayer gameplayer11 = new GamePlayer(game6, player4, LocalDateTime.now().plusHours(5));
+			GamePlayer gamePlayer11 = new GamePlayer(game6, player4, LocalDateTime.now().plusHours(5));
 
-			gameplayerRepository.save(gameplayer1);
-			gameplayerRepository.save(gameplayer2);
-			gameplayerRepository.save(gameplayer3);
-			gameplayerRepository.save(gameplayer4);
-			gameplayerRepository.save(gameplayer5);
-			gameplayerRepository.save(gameplayer6);
-			gameplayerRepository.save(gameplayer7);
-			gameplayerRepository.save(gameplayer8);
-			gameplayerRepository.save(gameplayer9);
-			gameplayerRepository.save(gameplayer10);
-			gameplayerRepository.save(gameplayer11);
+			gameplayerRepository.save(gamePlayer1);
+			gameplayerRepository.save(gamePlayer2);
+			gameplayerRepository.save(gamePlayer3);
+			gameplayerRepository.save(gamePlayer4);
+			gameplayerRepository.save(gamePlayer5);
+			gameplayerRepository.save(gamePlayer6);
+			gameplayerRepository.save(gamePlayer7);
+			gameplayerRepository.save(gamePlayer8);
+			gameplayerRepository.save(gamePlayer9);
+			gameplayerRepository.save(gamePlayer10);
+			gameplayerRepository.save(gamePlayer11);
 
-			Ship ship1 = new Ship("Destroyer", gameplayer1, Arrays.asList("H1","H2"));
-			Ship ship2 = new Ship("Cruiser", gameplayer1, Arrays.asList("H1","H2","H3"));
-
-
+			Ship ship1 = new Ship("Destroyer", gamePlayer1, Arrays.asList("H1","H2"));
+			Ship ship2 = new Ship("Cruiser", gamePlayer1, Arrays.asList("G1","G2","G3"));
 
 			shipRepository.save(ship1);
 			shipRepository.save(ship2);
-
 
 		};
 	}

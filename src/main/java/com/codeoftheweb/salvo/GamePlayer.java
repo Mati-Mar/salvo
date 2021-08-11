@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -33,9 +34,7 @@ public class GamePlayer {
     @OneToMany(mappedBy="gamePlayerID", fetch=FetchType.EAGER)
     Set<Ship> ships;
 
-
     public GamePlayer() { } /*Siempre constructor vacío*/
-
 
     public GamePlayer(Game gameID, Player playerID, LocalDateTime joinDate) {
         this.gameID = gameID;
@@ -72,9 +71,12 @@ public class GamePlayer {
         Map <String, Object> dto = new LinkedHashMap<>();
         dto.put("id", this.getId());
         dto.put("player",this.getPlayerID().makePlayerDTO() );
+        dto.put("ship" ,this.getShips()
+                .stream()
+                .map(x -> x.makeShipDTO())
+                .collect(Collectors.toList()));
 
         return dto;
-
     }
 
     public Long getId() {
