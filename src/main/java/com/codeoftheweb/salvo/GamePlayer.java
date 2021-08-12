@@ -25,20 +25,20 @@ public class GamePlayer {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="game_id")
-    private Game gameID;
+    private Game game;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="player_id")
-    private Player playerID;
+    private Player player;
 
-    @OneToMany(mappedBy="gamePlayerID", fetch=FetchType.EAGER)
+    @OneToMany(mappedBy="gamePlayer", fetch=FetchType.EAGER)
     Set<Ship> ships;
 
     public GamePlayer() { } /*Siempre constructor vacío*/
 
-    public GamePlayer(Game gameID, Player playerID, LocalDateTime joinDate) {
-        this.gameID = gameID;
-        this.playerID = playerID;
+    public GamePlayer(Game game, Player player, LocalDateTime joinDate) {
+        this.game = game;
+        this.player = player;
         this.joinDate = joinDate;
     }
 
@@ -50,31 +50,27 @@ public class GamePlayer {
         this.joinDate = joinDate;
     }
 
-    public Game getGameID() {
-        return gameID;
+    public Game getGame() {
+        return game;
     }
 
-    public void setGameID(Game gameID) {
-        this.gameID = gameID;
+    public void setGame(Game game) {
+        this.game = game;
     }
 
-    public Player getPlayerID() {
-        return playerID;
+    public Player getPlayer() {
+        return player;
     }
 
-    public void setPlayerID(Player playerID) {
-        this.playerID = playerID;
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
     public Map<String, Object> makeGamePlayerDTO(){
 
         Map <String, Object> dto = new LinkedHashMap<>();
         dto.put("id", this.getId());
-        dto.put("player",this.getPlayerID().makePlayerDTO() );
-        dto.put("ship" ,this.getShips()
-                .stream()
-                .map(x -> x.makeShipDTO())
-                .collect(Collectors.toList()));
+        dto.put("player",this.getPlayer().makePlayerDTO() );
 
         return dto;
     }
@@ -95,9 +91,21 @@ public class GamePlayer {
         this.ships = ships;
     }
 
-    //@JsonIgnore
-    //public List<Ship> getShips() {
-    //    return ships.stream().map(gamePlayer -> gamePlayer.getShips()).collect(toList());
-    //}
+    public Map<String, Object> makeGameViewDTO(){
+        Map<String, Object> dto= new LinkedHashMap<>();
+        dto.put("id", this.getGame().getId());
+        dto.put("created", this.getGame().getCreationDate());
+        dto.put("gamePlayers", this.getGame().getGamePlayers()
+                .stream()
+                .map(gamePlayer-> gamePlayer.makeGamePlayerDTO())
+                .collect(Collectors.toList()));
+        dto.put("ships",this.getShips()
+                .stream()
+                .map(ship -> ship.makeShipDTO())
+                .collect(Collectors.toList()));
+        return dto;
+    }
+
+
 
 }

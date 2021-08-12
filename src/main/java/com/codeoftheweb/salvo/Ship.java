@@ -26,14 +26,14 @@ public class Ship {
     private List<String> shipLocation  = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="gamePlayerID")
-    private GamePlayer gamePlayerID;
+    @JoinColumn(name="gamePlayer")
+    private GamePlayer gamePlayer;
 
     public Ship() { }
 
-    public Ship(String type, GamePlayer gamePlayerID, List<String> shipLocation) {
+    public Ship(String type, GamePlayer gamePlayer, List<String> shipLocation) {
         this.type = type;
-        this.gamePlayerID = gamePlayerID;
+        this.gamePlayer = gamePlayer;
         this.shipLocation = shipLocation;
     }
 
@@ -41,17 +41,17 @@ public class Ship {
 
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("type" , this.getType());
-        dto.put("location" , this.getShipLocation());
+        dto.put("locations" , this.getShipLocation());
 
         return dto;
     }
 
-    public GamePlayer getGamePlayerID() {
-        return gamePlayerID;
+    public GamePlayer getGamePlayer() {
+        return gamePlayer;
     }
 
-    public void setGamePlayerID(GamePlayer gamePlayerID) {
-        this.gamePlayerID = gamePlayerID;
+    public void setGamePlayer(GamePlayer gamePlayer) {
+        this.gamePlayer = gamePlayer;
     }
 
     public Long getId() {

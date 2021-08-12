@@ -18,11 +18,11 @@ public class Player {
     @GenericGenerator(name = "native", strategy = "native")
     private Long id;
 
-    @OneToMany(mappedBy="playerID", fetch=FetchType.EAGER)
+    @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
     Set<GamePlayer> gamePlayers;
 
     public void addGamePlayer(GamePlayer gameplayer) {
-        gameplayer.setPlayerID(this); //Porque PlayerID?
+        gameplayer.setPlayer(this); //Porque PlayerID?
         gamePlayers.add(gameplayer);
     }
 
@@ -57,7 +57,7 @@ public class Player {
 
 
     public List<Game> getGames() {
-        return gamePlayers.stream().map(sub -> sub.getGameID()).collect(toList());
+        return gamePlayers.stream().map(sub -> sub.getGame()).collect(toList());
     }
 
 

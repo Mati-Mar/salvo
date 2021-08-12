@@ -24,7 +24,7 @@ public class Game {
     @GenericGenerator(name = "native", strategy = "native")
     private Long id;
 
-    @OneToMany(mappedBy = "gameID", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
     Set<GamePlayer> gamePlayers;
 
     private LocalDateTime creationDate;
@@ -80,7 +80,7 @@ public class Game {
 
     @JsonIgnore
     public List<Player> getPlayers() {
-        return gamePlayers.stream().map(sub -> sub.getPlayerID()).collect(toList());
+        return gamePlayers.stream().map(sub -> sub.getPlayer()).collect(toList());
     }
 
 }
