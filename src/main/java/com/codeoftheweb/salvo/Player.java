@@ -22,7 +22,7 @@ public class Player {
     Set<GamePlayer> gamePlayers;
 
     public void addGamePlayer(GamePlayer gameplayer) {
-        gameplayer.setPlayer(this); //Porque PlayerID?
+        gameplayer.setPlayer(this);
         gamePlayers.add(gameplayer);
     }
 

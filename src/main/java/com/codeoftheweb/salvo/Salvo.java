@@ -4,7 +4,9 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Entity
@@ -15,7 +17,7 @@ public class Salvo {
     @GenericGenerator(name = "native", strategy = "native")
     private Long id;
 
-    private String turn;
+    private int turn;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="gamePlayer")
@@ -23,20 +25,31 @@ public class Salvo {
 
     @ElementCollection
     @Column (name="salvoLocation")
-    private List<String> salvoLocation  = new ArrayList<>();
+    private List<String> salvoLocations  = new ArrayList<>();
 
+    public Salvo() { }
 
-    public Salvo (String turn, List<String> salvoLocation, GamePlayer gamePlayer) {
+    public Salvo(int turn, GamePlayer gamePlayer, List<String> salvoLocations) {
         this.turn = turn;
-        this.salvoLocation = salvoLocation;
         this.gamePlayer = gamePlayer;
+        this.salvoLocations = salvoLocations;
     }
 
-    public String getTurn() {
+    public Map<String, Object> makeSalvoDTO(){
+        Map<String, Object>     dto= new LinkedHashMap<>();
+        dto.put("turn", getTurn());
+
+        //Agregar parte de player para asociar
+
+        dto.put("locations", getSalvoLocations());
+        return dto;
+    }
+
+    public int getTurn() {
         return turn;
     }
 
-    public void setTurn(String turn) {
+    public void setTurn(int turn) {
         this.turn = turn;
     }
 
@@ -48,12 +61,12 @@ public class Salvo {
         this.gamePlayer = gamePlayer;
     }
 
-    public List<String> getSalvoLocation() {
-        return salvoLocation;
+    public List<String> getSalvoLocations() {
+        return salvoLocations;
     }
 
-    public void setSalvoLocation(List<String> salvoLocation) {
-        this.salvoLocation = salvoLocation;
+    public void setSalvoLocations(List<String> salvoLocations) {
+        this.salvoLocations = salvoLocations;
     }
 
     public Long getId() {
@@ -67,5 +80,7 @@ public class Salvo {
     public Salvo(Long id) {
         this.id = id;
     }
+
+
 
 }

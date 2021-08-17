@@ -35,7 +35,7 @@ public class GamePlayer {
     Set<Ship> ships;
 
     @OneToMany(mappedBy="gamePlayer", fetch=FetchType.EAGER)
-    Set<Ship> salvo;
+    Set<Salvo> salvos;
 
     public GamePlayer() { } /*Siempre constructor vacío*/
 
@@ -94,26 +94,29 @@ public class GamePlayer {
         this.ships = ships;
     }
 
-    public Set<Ship> getSalvo() {
-        return salvo;
+    public Set<Salvo> getSalvos() {
+        return salvos;
     }
 
-    public void setSalvo(Set<Ship> salvo) {
-        this.salvo = salvo;
+    public void setSalvos(Set<Salvo> salvos) {
+        this.salvos = salvos;
     }
-
 
     public Map<String, Object> makeGameViewDTO(){
-        Map<String, Object> dto= new LinkedHashMap<>();
+        Map<String, Object>     dto= new LinkedHashMap<>();
         dto.put("id", this.getGame().getId());
         dto.put("created", this.getGame().getCreationDate());
         dto.put("gamePlayers", this.getGame().getGamePlayers()
                 .stream()
-                .map(gamePlayer-> gamePlayer.makeGamePlayerDTO())
+                .map(gamePlayer -> gamePlayer.makeGamePlayerDTO())
                 .collect(Collectors.toList()));
-        dto.put("ships",this.getShips()
+        dto.put("ships" ,this.getShips()
                 .stream()
                 .map(ship -> ship.makeShipDTO())
+                .collect(Collectors.toList()));
+        dto.put("salvoes" ,this.getSalvos()
+                .stream()
+                .map(salvo -> salvo.makeSalvoDTO())
                 .collect(Collectors.toList()));
         return dto;
     }
