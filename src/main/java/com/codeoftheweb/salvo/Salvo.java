@@ -39,7 +39,7 @@ public class Salvo {
         Map<String, Object>     dto= new LinkedHashMap<>();
         dto.put("turn", getTurn());
 
-        //Agregar parte de player para asociar
+        dto.put("player", getGamePlayer().getPlayer().getId());
 
         dto.put("locations", getSalvoLocations());
         return dto;

@@ -29,8 +29,7 @@ public class Game {
 
     private LocalDateTime creationDate;
 
-    public Game() {
-    } /*Siempre constructor vacío*/
+    public Game() { } /*Siempre constructor vacío*/
 
     public Game(LocalDateTime creationDate) {
         this.creationDate = creationDate;
