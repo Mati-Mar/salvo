@@ -121,7 +121,8 @@ public class GamePlayer {
                         .map(salvo -> salvo.makeSalvoDTO())
                         )
                 .collect(Collectors.toList()));
-        return dto;
+
+         return dto;
     }
 
 
