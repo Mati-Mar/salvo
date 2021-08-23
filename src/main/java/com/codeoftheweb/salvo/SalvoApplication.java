@@ -21,7 +21,8 @@ public class SalvoApplication {
 									  GameRepository gameRepository,
 									  GamePlayerRepository gameplayerRepository,
 									  ShipRepository shipRepository,
-									  SalvoRepository salvoRepository) {
+									  SalvoRepository salvoRepository,
+									  ScoreRepository scoreRepository) {
 		return (args) -> {
 
 			Player player1 = new Player("j.bauer@ctu.gov");
@@ -96,13 +97,11 @@ public class SalvoApplication {
 			Salvo salvo1 = new Salvo(1,  gamePlayer1, Arrays.asList("H1","H2"));
 			Salvo salvo2 = new Salvo(2,  gamePlayer1, Arrays.asList("A1","A2"));
 
-
 			Salvo salvo3 = new Salvo(1,  gamePlayer2, Arrays.asList("H1","H2"));
 			Salvo salvo4 = new Salvo(2,  gamePlayer2, Arrays.asList("B1","B2", "B3", "B4"));
 
 			Salvo salvo5 = new Salvo(1,  gamePlayer3, Arrays.asList("C1","C2"));
 			Salvo salvo6 = new Salvo(2,  gamePlayer3, Arrays.asList("H1","H2", "H3", "H4"));
-
 
 			salvoRepository.save(salvo1);
 			salvoRepository.save(salvo2);
@@ -111,6 +110,11 @@ public class SalvoApplication {
 			salvoRepository.save(salvo5);
 			salvoRepository.save(salvo6);
 
+			Score score1 = new Score( 1.5d, LocalDateTime.now(), game1, player1);
+			Score score2 = new Score( 1d, LocalDateTime.now(), game1, player2);
+
+			scoreRepository.save(score1);
+			scoreRepository.save(score2);
 		};
 	}
 

@@ -3,10 +3,7 @@ package com.codeoftheweb.salvo;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -18,8 +15,11 @@ public class Player {
     @GenericGenerator(name = "native", strategy = "native")
     private Long id;
 
-    @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
     Set<GamePlayer> gamePlayers;
+
+    @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
+    Set<Score> scores;
 
     public void addGamePlayer(GamePlayer gameplayer) {
         gameplayer.setPlayer(this);
@@ -28,7 +28,8 @@ public class Player {
 
     private String userName;
 
-    public Player() { } /*Siempre constructor vacío*/
+    public Player() {
+    } /*Siempre constructor vacío*/
 
     public Player(String userName) {
         this.userName = userName;
@@ -55,21 +56,32 @@ public class Player {
     }
 
 
+    public void setScores(Set<Score> scores) {
+        this.scores = scores;
+    }
 
     public List<Game> getGames() {
         return gamePlayers.stream().map(sub -> sub.getGame()).collect(toList());
     }
 
 
-    public Map<String, Object> makePlayerDTO(){
+    public Map<String, Object> makePlayerDTO() {
 
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("id", this.getId());
-        dto.put("email",this.getUserName());
+        dto.put("email", this.getUserName());
 
         return dto;
 
     }
+
+    public Optional<Score> getScore (Game game)
+    {
+        return this.getScores()
+                .stream()
+                .filter(sc -> sc.getGame().getId().equals(game.getId())).findFirst();
+    }
+
 
     public Long getId() {
         return id;
@@ -78,4 +90,13 @@ public class Player {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public Set<Score> getScores() {
+        return scores;
+    }
+
 }
+
+
+
+

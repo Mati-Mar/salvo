@@ -5,10 +5,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -102,6 +99,8 @@ public class GamePlayer {
         this.salvos = salvos;
     }
 
+
+
     public Map<String, Object> makeGameViewDTO(){
         Map<String, Object>     dto= new LinkedHashMap<>();
         dto.put("id", this.getGame().getId());
@@ -121,10 +120,12 @@ public class GamePlayer {
                         .map(salvo -> salvo.makeSalvoDTO())
                         )
                 .collect(Collectors.toList()));
+//        dto.put("scores" ,)
 
          return dto;
     }
 
-
-
+    public Optional<Score> getScore() {
+        return this.getPlayer().getScore(this.getGame());
+    }
 }

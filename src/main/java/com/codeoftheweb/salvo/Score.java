@@ -1,16 +1,12 @@
 package com.codeoftheweb.salvo;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
+import java.util.Set;
 
 @Entity
 public class Score {
@@ -20,7 +16,8 @@ public class Score {
     @GenericGenerator(name = "native", strategy = "native")
     private Long id;
 
-    private double score;
+    private Double score;
+    private LocalDateTime finishDate;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="game_id")
@@ -32,19 +29,24 @@ public class Score {
 
     private Score() { }
 
-    public Score(double score, Game game, Player player) {
+    public Score(Double score, LocalDateTime finishDate, Game game, Player player) {
         this.score = score;
+        this.finishDate = finishDate;
         this.game = game;
         this.player = player;
     }
 
-    public double getScore() {
-        return score;
+public Map<String, Object> makeScoreDTO() {
+
+        Map<String, Object> dto = new LinkedHashMap<>();
+
+        dto.put("player" , this.getPlayer().getId());
+        dto.put("score" , this.getScore());
+        dto.put("finishDate" , this.getFinishDate());
+
+        return dto;
     }
 
-    public void setScore(double score) {
-        this.score = score;
-    }
 
     public Game getGame() {
         return game;
@@ -62,5 +64,20 @@ public class Score {
         this.player = player;
     }
 
+    public LocalDateTime getFinishDate() {
+        return finishDate;
+    }
 
+    public void setFinishDate(LocalDateTime finishDate) {
+        this.finishDate = finishDate;
+    }
+
+    public Double getScore() {
+        return score;
+    }
+
+    public void setScore(Double score) {
+        this.score = score;
+    }
 }
+

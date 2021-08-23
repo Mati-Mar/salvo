@@ -6,10 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -18,7 +15,6 @@ import static java.util.stream.Collectors.toList;
 @Entity
 public class Game {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
@@ -26,6 +22,9 @@ public class Game {
 
     @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
     Set<GamePlayer> gamePlayers;
+
+    @OneToMany(mappedBy="player", fetch=FetchType.EAGER)
+    Set<Score> scores;
 
     private LocalDateTime creationDate;
 
@@ -44,9 +43,30 @@ public class Game {
                 .stream()
                 .map(gamePlayer -> gamePlayer.makeGamePlayerDTO())
                 .collect(Collectors.toList()));
+        dto.put("scores" , this.getGamePlayers()
+                        .stream()
+                        .map (gp -> {
+                            if (gp.getScore().isPresent())
+                            {
+                                return gp.getScore().get().makeScoreDTO();
+                            }
+                            else {
+                                return null;
+                            }
+                        }));
 
+
+/*              //Método más fácil
+
+                this.getScores()
+                .stream()
+                .map(score -> score.makeScoreDTO())
+                .collect(Collectors.toList()));
+ */
         return dto;
     }
+
+
 
     public Game(Set<GamePlayer> gamePlayers) {
         this.gamePlayers = gamePlayers;
@@ -76,6 +96,13 @@ public class Game {
         this.id = id;
     }
 
+    public Set<Score> getScores() {
+        return scores;
+    }
+
+    public void setScores(Set<Score> scores) {
+        this.scores = scores;
+    }
 
     @JsonIgnore
     public List<Player> getPlayers() {
