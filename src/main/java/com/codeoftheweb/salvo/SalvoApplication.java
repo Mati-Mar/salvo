@@ -110,12 +110,19 @@ public class SalvoApplication {
 			salvoRepository.save(salvo5);
 			salvoRepository.save(salvo6);
 
-			Score score1 = new Score( 1.5d, LocalDateTime.now(), game1, player1);
+			Score score1 = new Score( 0d, LocalDateTime.now(), game1, player1);
 			Score score2 = new Score( 1d, LocalDateTime.now(), game1, player2);
+
+			Score score3 = new Score( 0.5d, LocalDateTime.now(), game2, player1);
+			Score score4 = new Score( 0.5d, LocalDateTime.now(), game2, player2);
 
 			scoreRepository.save(score1);
 			scoreRepository.save(score2);
-		};
-	}
 
+			scoreRepository.save(score3);
+			scoreRepository.save(score4);
+
+	};
+
+}
 }

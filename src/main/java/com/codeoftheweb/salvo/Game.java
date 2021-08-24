@@ -46,6 +46,15 @@ public class Game {
         dto.put("scores" , this.getGamePlayers()
                         .stream()
                         .map (gp -> {
+
+/*              //Método más fácil
+
+                this.getScores()
+                .stream()
+                .map(score -> score.makeScoreDTO())
+                .collect(Collectors.toList()));
+ */
+
                             if (gp.getScore().isPresent())
                             {
                                 return gp.getScore().get().makeScoreDTO();
@@ -56,13 +65,7 @@ public class Game {
                         }));
 
 
-/*              //Método más fácil
 
-                this.getScores()
-                .stream()
-                .map(score -> score.makeScoreDTO())
-                .collect(Collectors.toList()));
- */
         return dto;
     }
 

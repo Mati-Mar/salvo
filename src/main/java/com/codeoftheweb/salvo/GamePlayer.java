@@ -120,8 +120,6 @@ public class GamePlayer {
                         .map(salvo -> salvo.makeSalvoDTO())
                         )
                 .collect(Collectors.toList()));
-//        dto.put("scores" ,)
-
          return dto;
     }
 

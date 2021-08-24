@@ -36,7 +36,7 @@ public class Score {
         this.player = player;
     }
 
-public Map<String, Object> makeScoreDTO() {
+    public Map<String, Object> makeScoreDTO() {
 
         Map<String, Object> dto = new LinkedHashMap<>();
 
@@ -46,7 +46,6 @@ public Map<String, Object> makeScoreDTO() {
 
         return dto;
     }
-
 
     public Game getGame() {
         return game;
