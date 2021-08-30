@@ -43,6 +43,9 @@ public class Game {
                 .stream()
                 .map(gamePlayer -> gamePlayer.makeGamePlayerDTO())
                 .collect(Collectors.toList()));
+
+        //Método más complicado
+
         dto.put("scores" , this.getGamePlayers()
                         .stream()
                         .map (gp -> {
