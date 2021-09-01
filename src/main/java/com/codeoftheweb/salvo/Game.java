@@ -63,7 +63,7 @@ public class Game {
                                 return gp.getScore().get().makeScoreDTO();
                             }
                             else {
-                                return null;
+                                return "";
                             }
                         }));
 

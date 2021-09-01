@@ -47,8 +47,8 @@ public class SalvoApplication {
 
 			Player player1 = new Player("j.bauer@ctu.gov", passwordEncoder().encode("24"));
 			Player player2 = new Player("c.obrian@ctu.gov", passwordEncoder().encode("42"));
-			Player player3 = new Player("t.almeida@ctu.gov", passwordEncoder().encode("kb"));
-			Player player4 = new Player("d.palmer@whitehouse.gov", passwordEncoder().encode("mole"));
+			Player player3 = new Player("kim_bauer@gmail.com", passwordEncoder().encode("kb"));
+			Player player4 = new Player("t.almeida@ctu.gov", passwordEncoder().encode("mole"));
 
 			playerRepository.save(player1);
 			playerRepository.save(player2);
@@ -168,7 +168,7 @@ class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 				return new User(player.getUserName(), player.getPassword(),
 						AuthorityUtils.createAuthorityList("PLAYER"));
 			} else {
-				throw new UsernameNotFoundException("Usuario desconocido: " + inputName);
+				throw new UsernameNotFoundException("Unknown user: " + inputName);
 			}
 		});
 	}
@@ -178,26 +178,32 @@ class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 @Configuration
 @EnableWebSecurity
 class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-	@Override
+	@Override  //Anular
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
 				//Acá doy los permisos de a que puede acceder cada usuario dependiendo de sus roles
 
 				//.antMatchers("/admin/**").hasAuthority("ADMIN")
 
-				.antMatchers("/api/login").permitAll()
-				.antMatchers("/web/**").permitAll()
-				//.antMatchers("/api/games").permitAll()
-
-				.antMatchers("**").hasAuthority("PLAYER")
+			//	.antMatchers("/api/login").permitAll()
+			//	.antMatchers("/api/games").permitAll()
+			//	.antMatchers("/web/**").permitAll()
+				//.antMatchers("**").permitAll()
+			//	.antMatchers("**").hasAuthority("PLAYER")
 				//.and()
 				//.formLogin()
+
+
+				.antMatchers("/api/login").permitAll()
+				.antMatchers("/api/game_view/**").hasAuthority("PLAYER")
+				.antMatchers("/web/**").permitAll()
+				.antMatchers("/api/games").permitAll()
 					;
 
 
 		http.formLogin()
-				.usernameParameter("username")
-				.passwordParameter("password")
+				.usernameParameter("name")
+				.passwordParameter("pwd")
 				.loginPage("/api/login");
 
 		http.logout().logoutUrl("/api/logout");
@@ -217,8 +223,6 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		// if logout is successful, just send a success response
 		http.logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
 	}
-
-
 
 	private void clearAuthenticationAttributes(HttpServletRequest request) {
 		HttpSession session = request.getSession(false);
