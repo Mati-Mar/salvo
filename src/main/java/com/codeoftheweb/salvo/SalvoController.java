@@ -51,8 +51,6 @@ public class SalvoController {
         {
             dto.put("player",playerRepository.findByUserName(authentication.getName()).makePlayerDTO());
         }
-
-
         dto.put("games", gameRepository.findAll()
                 .stream()
                 .map(game -> game.makeGameDTO())
@@ -71,7 +69,7 @@ public class SalvoController {
                 return new ResponseEntity<>(makeMap("error", "Username already exists"), HttpStatus.FORBIDDEN);
             }
             Player newPlayer = playerRepository.save(new Player(email, passwordEncoder.encode(password)));
-            return new ResponseEntity<>(makeMap("id", newPlayer.getId()), HttpStatus.CREATED);
+            return new ResponseEntity<>(makeMap("name", newPlayer.getUserName()), HttpStatus.CREATED);
         }
 
 
@@ -81,16 +79,19 @@ public class SalvoController {
             return map;
         }
 
-
-
-
-
     @RequestMapping("/game_view/{nn}")
-    public Map<String, Object> findGamePlayer(@PathVariable Long nn) {
+    public ResponseEntity<Map<String, Object>> findGamePlayer(@PathVariable Long nn, Authentication authentication) {
 
         GamePlayer gamePlayer = gamePlayerRepository.findById(nn).get();
 
-        return gamePlayer.makeGameViewDTO();
+        if (gamePlayer.getPlayer().getId() != playerRepository.findByUserName(authentication.getName()).getId()) {
+            return new ResponseEntity<>(makeMap("error", "No hagas trampa"), HttpStatus.UNAUTHORIZED);
+        }
+        else {
+            return new ResponseEntity<>(gamePlayer.makeGameViewDTO(), HttpStatus.ACCEPTED);
+        }
+
+
     }
 
 }
