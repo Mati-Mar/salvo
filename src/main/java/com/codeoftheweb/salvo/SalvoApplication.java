@@ -202,7 +202,6 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("**").hasAuthority("PLAYER")
 					;
 
-
 		http.formLogin()
 				.usernameParameter("name")
 				.passwordParameter("pwd")
