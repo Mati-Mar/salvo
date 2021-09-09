@@ -183,24 +183,20 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests()
 				//Acá doy los permisos de a que puede acceder cada usuario dependiendo de sus roles
 
-				//.antMatchers("/admin/**").hasAuthority("ADMIN")
-
-			//	.antMatchers("/api/login").permitAll()
-			//	.antMatchers("/api/games").permitAll()
-			//	.antMatchers("/web/**").permitAll()
-				//.antMatchers("**").permitAll()
-			//	.antMatchers("**").hasAuthority("PLAYER")
-				//.and()
-				//.formLogin()
-
-
 				.antMatchers("/api/login").permitAll()
 				.antMatchers("/api/players").permitAll()
-				.antMatchers("/api/game_view/**").hasAuthority("PLAYER")
 				.antMatchers("/web/**").permitAll()
 				.antMatchers("/api/games").permitAll()
-				.antMatchers("**").hasAuthority("PLAYER")
-					;
+                .antMatchers("/h2-console/**").permitAll()
+                .and().headers().frameOptions().disable()
+                .and().csrf().ignoringAntMatchers("/h2-console/**")
+                .and().cors().disable()
+                    ;
+
+        http.authorizeRequests().
+                antMatchers("/api/game_view/**").hasAuthority("PLAYER")
+                //.antMatchers("**").hasAuthority("PLAYER")
+                    ;
 
 		http.formLogin()
 				.usernameParameter("name")
