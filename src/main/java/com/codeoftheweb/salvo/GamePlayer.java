@@ -102,27 +102,80 @@ public class GamePlayer {
         this.salvos = salvos;
     }
 
-    @ElementCollection //En vez de crear una clase para con un solo atributo, creo un atributo solo
-    @Column(name="hits_self")
-    private List<String> self = new ArrayList<>();
+//    private List<String> self = new ArrayList<>();
+//      YA NO ES NECESARIO
+//    private List<String> opponent = new ArrayList<>();
 
-    @ElementCollection //En vez de crear una clase para con un solo atributo, creo un atributo solo
-    @Column(name="hits_opponent")
-    private List<String> opponent = new ArrayList<>();
-
-    public Map<String, Object> makeHitsDTO(){
-        Map <String, Object> dto = new LinkedHashMap<>();
-        dto.put("self", self);
-        dto.put("opponent",opponent);
-
-        return dto;
+    private Map<String, Object> makeMap(String key, Object value) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(key, value);
+        return map;
     }
+
+    public GamePlayer getOpponent() {
+
+        GamePlayer opponent = this.getGame().getGamePlayers()
+                .stream()
+                .filter(gp -> gp.getId() != this.getId())
+                .findFirst().orElse(null);
+
+        return opponent;
+    }
+
+
+
+   public List <Map <String, Object>> hitsBarcos(){
+        List <Map <String, Object>> hits = new ArrayList<>();
+        System.out.println("UWU");
+
+        //Obtengo la posición del barco dependiendo su tipo
+
+        Ship carrier = this.getShips().stream().filter(sh -> sh.getType().equals("carrier")).findFirst().get();
+        List <String> carrierLocations = carrier.getShipLocations();
+
+        Ship battleship = this.getShips().stream().filter(sh -> sh.getType().equals("battleship")).findFirst().get();
+        List <String> battleshipLocations = battleship.getShipLocations();
+
+        Ship submarine = this.getShips().stream().filter(sh -> sh.getType().equals("submarine")).findFirst().get();
+        List <String> submarineLocations = submarine.getShipLocations();
+
+        Ship destroyer = this.getShips().stream().filter(sh -> sh.getType().equals("destroyer")).findFirst().get();
+        List <String> destroyerLocations = destroyer.getShipLocations();
+
+        Ship patrolboat = this.getShips().stream().filter(sh -> sh.getType().equals("patrolboat")).findFirst().get();
+        List <String> patrolboatLocations = patrolboat.getShipLocations();
+
+        Map <String, Object> damages = new LinkedHashMap<>();
+
+        damages.put("carrierHits", "");
+        damages.put("battleshipHits", "");
+        damages.put("submarineHits", "");
+        damages.put("destroyerHits", "");
+        damages.put("patrolboatHits", "");
+
+        damages.put("carrier", "");
+        damages.put("battleship", "");
+        damages.put("submarine", "");
+        damages.put("destroyer", "");
+        damages.put("patrolboat", "");
+
+
+        hits.add(makeMap("turn", this.getSalvos().size()));
+        hits.add(makeMap("hitLocations", this.hitsBarcos()));
+        hits.add(makeMap("damages", damages));
+        hits.add(makeMap("missed", ""));
+
+
+
+        return hits;
+    }
+
 
     public Map<String, Object> makeGameViewDTO(){
         Map<String, Object>     dto= new LinkedHashMap<>();
         dto.put("id", this.getGame().getId());
         dto.put("created", this.getGame().getCreationDate());
-        dto.put("gameState" , "PLACESHIPS");
+        dto.put("gameState" , "PLACESHIPS");  //Recordar de cambiar a PLAY, WAIT, etc.
         dto.put("gamePlayers", this.getGame().getGamePlayers()
                 .stream()
                 .map(gamePlayer -> gamePlayer.makeGamePlayerDTO())
@@ -138,7 +191,21 @@ public class GamePlayer {
                         .map(salvo -> salvo.makeSalvoDTO())
                         )
                 .collect(Collectors.toList()));
-        dto.put("hits", this.makeHitsDTO());
+
+        GamePlayer opponent = this.getOpponent();
+
+        Map<String, Object> hits = new LinkedHashMap<>();
+
+        if (opponent == null) {
+            hits.put("self", new ArrayList<>());
+            hits.put("opponent", new ArrayList<>());
+        }
+        else {
+            hits.put("self",    this.hitsBarcos());
+            hits.put("opponent", opponent.hitsBarcos());
+        }
+
+        dto.put("hits", hits);
          return dto;
     }
 
