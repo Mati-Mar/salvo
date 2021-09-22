@@ -114,42 +114,131 @@ public class GamePlayer {
     }
 
     private String gameState() {
-        String gameState= "";
+//            WAITINGFOROPP,
+//            WAIT,
+//            PLAY,
+//            PLACESHIPS,
+//            WON,
+//            LOST,
+//            TIE,
+//            UNDEFINED
 
-        //    WAITINGFOROPP,
-        //    WAIT,
-        //    PLAY,
-        //    PLACESHIPS,
-        //    WON,
-        //    LOST,
-        //    TIE,
-        //    UNDEFINED
+
+        String gameState= "UNDEFINED" ;
+
+
         GamePlayer opponent = this.getOpponent();
+
+        //Con min y max saco el jugador que creó la partida ya que el que tiene el GP menor es el que la creó.
+        GamePlayer gamePlayer1= this.getGame().getGamePlayers().stream().min(Comparator.comparing(gp -> gp.getId())).get();
+        GamePlayer gamePlayer2= this.getGame().getGamePlayers().stream().max(Comparator.comparing(gp -> gp.getId())).get();
 
         if (opponent == null) {
             gameState = "WAITINGFOROPP";
+            return gameState;
         }
         if (this.getShips().size() != 5) {
             gameState = "PLACESHIPS";
+            return gameState;
         }
+
+        //AGREGAR ESTADOS DE WIN, LOSE, ETC
+
         if (opponent.getShips().size() != 5) {
             gameState = "WAIT";
+            return gameState;
         }
 
         if (this.getShips().size() == 5 && opponent.getShips().size() == 5) {
-            gameState = "PLAY";
+
+            //Si el gameplayer que creó el juego soy yo
+            if (gamePlayer1 == this) {
+                //Obtener el turno y el del oponente, yo puedo jugar si ambos tenemos el mismo turno
+                if (gamePlayer1.getSalvos().size() == opponent.getSalvos().size()) {
+                    gameState = "PLAY";
+                    return gameState;
+                }
+
+                else {
+                    //Si no tenemos el mismo turno hay que esperar hasta que el oponente juegue.
+                    gameState = "WAIT";
+                    return gameState;
+                }
+            }
+
+            //Si soy el gameplayer que se unió a la partida ya creada...
+            if (gamePlayer2 == this) {
+                //Obtengo el turno y para poder jugar mi turno tiene que ser menor al turno del GP que creó la partida.
+                if (gamePlayer2.getSalvos().size() < opponent.getSalvos().size()) {
+                    gameState = "PLAY";
+                    return gameState;
+                }
+                //Sino espera.
+                else {
+                    gameState = "WAIT";
+                    return gameState;
+                }
+            }
         }
 
-        if (this.getSalvos().size() > opponent.getSalvos().size()) {
-            gameState = "WAIT";
+
+        // TIE, WIN Y LOST STATE
+
+        if (this.getId()==gamePlayer1.getId()){
+            if (this.barcosHundidos(opponent, this)){
+                if (gamePlayer1.getSalvos().size()>gamePlayer2.getSalvos().size()){
+                    gameState =  "WAIT";
+                    return gameState;
+                }
+                else if (this.barcosHundidos(this,opponent)){
+                    gameState =  "TIE";
+                    return gameState;
+                }
+                else {
+                    gameState =  "WON";
+                    return gameState;
+                }
+            }
+            if (this.barcosHundidos(this,opponent)){
+                gameState =  "LOST";
+                return gameState;
+            }
         }
         else {
-            gameState = "PLAY";
+            if(this.barcosHundidos(opponent,this)){
+                if (this.barcosHundidos(this,opponent)){
+                    gameState = "TIE";
+                    return gameState;
+                }
+                else {
+                    gameState = "WIN";
+                    return gameState;
+                }
+            }
+            if(this.barcosHundidos(this,opponent)){
+                if (gamePlayer1.getSalvos().size()==gamePlayer2.getSalvos().size()){
+                    gameState = "LOST";
+                    return gameState;
+                }
+            }
         }
 
 
 
-        return gameState;
+
+        if (gamePlayer1.getId() > gamePlayer2.getId()) {
+            gameState = "WAIT";
+            return gameState;
+        }
+
+        else {
+            gameState = "PLAY";
+            return gameState;
+        }
+
+        //FALTAN ESTADOS POR AGREGAR COMO EL UNDEFINED Y ADEMAS HAY QUE PROBARLOS
+
+
     }
 
     public GamePlayer getOpponent() {
@@ -160,6 +249,20 @@ public class GamePlayer {
         return opponent;
     }
 
+    private boolean barcosHundidos(GamePlayer gpBarcos, GamePlayer gpSalvos) {
+    //Primero envio los barcos que tengo en la lista, y después mando los tiros que hizo el otro GP
+
+        GamePlayer opponent = this.getOpponent();
+
+        if (!gpBarcos.getShips().isEmpty() && !gpSalvos.getSalvos().isEmpty()) {
+            return  gpSalvos.getSalvos()
+                    .stream().flatMap(salvo -> salvo.getSalvoLocations().stream()).collect(Collectors.toList())
+                    .containsAll(gpBarcos.getShips()
+                            .stream().flatMap(ship -> ship.getShipLocations().stream())
+                            .collect(Collectors.toList()));
+        }
+        return false;
+    }
 
 
    public List <Map <String, Object>> hitsBarcos(){
