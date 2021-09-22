@@ -32,6 +32,7 @@ public class GamePlayer {
     Set<Ship> ships;
 
     @OneToMany(mappedBy="gamePlayer", fetch=FetchType.EAGER)
+    @OrderBy
     Set<Salvo> salvos;
 
     private int Hits;
@@ -107,67 +108,164 @@ public class GamePlayer {
 //    private List<String> opponent = new ArrayList<>();
 
     private Map<String, Object> makeMap(String key, Object value) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new LinkedHashMap<>();
         map.put(key, value);
         return map;
     }
 
-    public GamePlayer getOpponent() {
+    private String gameState() {
+        String gameState= "";
 
+        //    WAITINGFOROPP,
+        //    WAIT,
+        //    PLAY,
+        //    PLACESHIPS,
+        //    WON,
+        //    LOST,
+        //    TIE,
+        //    UNDEFINED
+        GamePlayer opponent = this.getOpponent();
+
+        if (opponent == null) {
+            gameState = "WAITINGFOROPP";
+        }
+        if (this.getShips().size() != 5) {
+            gameState = "PLACESHIPS";
+        }
+        if (opponent.getShips().size() != 5) {
+            gameState = "WAIT";
+        }
+
+        if (this.getShips().size() == 5 && opponent.getShips().size() == 5) {
+            gameState = "PLAY";
+        }
+
+        if (this.getSalvos().size() > opponent.getSalvos().size()) {
+            gameState = "WAIT";
+        }
+        else {
+            gameState = "PLAY";
+        }
+
+
+
+        return gameState;
+    }
+
+    public GamePlayer getOpponent() {
         GamePlayer opponent = this.getGame().getGamePlayers()
                 .stream()
                 .filter(gp -> gp.getId() != this.getId())
-                .findFirst().orElse(null);
-
+                .findFirst().orElse(new GamePlayer());
         return opponent;
     }
 
 
 
    public List <Map <String, Object>> hitsBarcos(){
-        List <Map <String, Object>> hits = new ArrayList<>();
-        System.out.println("UWU");
+        List <Map <String, Object>> hitsBarcos = new ArrayList<>();
 
-        //Obtengo la posición del barco dependiendo su tipo
 
-        Ship carrier = this.getShips().stream().filter(sh -> sh.getType().equals("carrier")).findFirst().get();
-        List <String> carrierLocations = carrier.getShipLocations();
+           //Obtengo la posición del barco dependiendo su tipo
+           Ship carrier = this.getShips().stream().filter(sh -> sh.getType().equals("carrier")).findFirst().get();
+           List<String> carrierLocations = carrier.getShipLocations();
 
-        Ship battleship = this.getShips().stream().filter(sh -> sh.getType().equals("battleship")).findFirst().get();
-        List <String> battleshipLocations = battleship.getShipLocations();
+           Ship battleship = this.getShips().stream().filter(sh -> sh.getType().equals("battleship")).findFirst().get();
+           List<String> battleshipLocations = battleship.getShipLocations();
 
-        Ship submarine = this.getShips().stream().filter(sh -> sh.getType().equals("submarine")).findFirst().get();
-        List <String> submarineLocations = submarine.getShipLocations();
+           Ship submarine = this.getShips().stream().filter(sh -> sh.getType().equals("submarine")).findFirst().get();
+           List<String> submarineLocations = submarine.getShipLocations();
 
-        Ship destroyer = this.getShips().stream().filter(sh -> sh.getType().equals("destroyer")).findFirst().get();
-        List <String> destroyerLocations = destroyer.getShipLocations();
+           Ship destroyer = this.getShips().stream().filter(sh -> sh.getType().equals("destroyer")).findFirst().get();
+           List<String> destroyerLocations = destroyer.getShipLocations();
 
-        Ship patrolboat = this.getShips().stream().filter(sh -> sh.getType().equals("patrolboat")).findFirst().get();
-        List <String> patrolboatLocations = patrolboat.getShipLocations();
+           Ship patrolboat = this.getShips().stream().filter(sh -> sh.getType().equals("patrolboat")).findFirst().get();
+           List<String> patrolboatLocations = patrolboat.getShipLocations();
+
 
         Map <String, Object> damages = new LinkedHashMap<>();
 
-        damages.put("carrierHits", "");
-        damages.put("battleshipHits", "");
-        damages.put("submarineHits", "");
-        damages.put("destroyerHits", "");
-        damages.put("patrolboatHits", "");
+        //Defino los contadores para ver cuantas veces golpeó al barco
 
-        damages.put("carrier", "");
-        damages.put("battleship", "");
-        damages.put("submarine", "");
-        damages.put("destroyer", "");
-        damages.put("patrolboat", "");
+       int carrierHitsTotal = 0;
+       int battleshipHitsTotal = 0;
+       int submarineHitsTotal = 0;
+       int destroyerHitsTotal = 0;
+       int patrolboatHitsTotal = 0;
 
+        //Se recorre el Salvo de cada turno
+        for (Salvo salvoTurn:getOpponent().getSalvos()) {
 
-        hits.add(makeMap("turn", this.getSalvos().size()));
-        hits.add(makeMap("hitLocations", this.hitsBarcos()));
-        hits.add(makeMap("damages", damages));
-        hits.add(makeMap("missed", ""));
+            Map <String, Object> mapBarcos = new LinkedHashMap<>();
 
 
 
-        return hits;
+            //List<Salvo> ListaSalvo= getOpponent().getSalvos().stream().filter(gp->gp.getTurn()<=salvoTurn.getTurn()).collect(Collectors.toList());
+
+            int carrierHitsTurno = 0;
+            int battleshipHitsTurno = 0;
+            int submarineHitsTurno = 0;
+            int destroyerHitsTurno = 0;
+            int patrolboatHitsTurno = 0;
+            int missed = salvoTurn.getSalvoLocations().size();
+
+            List<String> hitsLocations = new ArrayList<>();
+
+            for (String salvoLocation: salvoTurn.getSalvoLocations()) {
+                if (carrierLocations.contains(salvoLocation)) {
+                    carrierHitsTotal++;
+                    carrierHitsTurno++;
+                    missed--;
+                    hitsLocations.add(salvoLocation);
+                }
+                if (battleshipLocations.contains(salvoLocation)) {
+                    battleshipHitsTotal++;
+                    battleshipHitsTurno++;
+                    missed--;
+                    hitsLocations.add(salvoLocation);
+                }
+                if (submarineLocations.contains(salvoLocation)) {
+                    submarineHitsTotal++;
+                    submarineHitsTurno++;
+                    missed--;
+                    hitsLocations.add(salvoLocation);
+                }
+                if (destroyerLocations.contains(salvoLocation)) {
+                    destroyerHitsTotal++;
+                    destroyerHitsTurno++;
+                    missed--;
+                    hitsLocations.add(salvoLocation);
+                }
+                if (patrolboatLocations.contains(salvoLocation)) {
+                    patrolboatHitsTotal++;
+                    patrolboatHitsTurno++;
+                    missed--;
+                    hitsLocations.add(salvoLocation);
+                }
+
+
+            }
+            damages.put("carrierHits", carrierHitsTurno);
+            damages.put("battleshipHits", battleshipHitsTurno);
+            damages.put("submarineHits", submarineHitsTurno);
+            damages.put("destroyerHits", destroyerHitsTurno);
+            damages.put("patrolboatHits", patrolboatHitsTurno);
+
+            damages.put("carrier", carrierHitsTotal);
+            damages.put("battleship", battleshipHitsTotal);
+            damages.put("submarine", submarineHitsTotal);
+            damages.put("destroyer", destroyerHitsTotal);
+            damages.put("patrolboat", patrolboatHitsTotal);
+
+            mapBarcos.put("turn", salvoTurn.getTurn());
+            mapBarcos.put("hitLocations", hitsLocations);
+            mapBarcos.put("damages", damages);
+            mapBarcos.put("missed", missed);
+
+            hitsBarcos.add(mapBarcos);
+
+        }
+        return hitsBarcos;
     }
 
 
@@ -175,7 +273,7 @@ public class GamePlayer {
         Map<String, Object>     dto= new LinkedHashMap<>();
         dto.put("id", this.getGame().getId());
         dto.put("created", this.getGame().getCreationDate());
-        dto.put("gameState" , "PLACESHIPS");  //Recordar de cambiar a PLAY, WAIT, etc.
+        dto.put("gameState" , gameState());  //Recordar de cambiar a  PLACESHIPS ,PLAY, WAIT, LOSE, etc.
         dto.put("gamePlayers", this.getGame().getGamePlayers()
                 .stream()
                 .map(gamePlayer -> gamePlayer.makeGamePlayerDTO())
@@ -196,15 +294,14 @@ public class GamePlayer {
 
         Map<String, Object> hits = new LinkedHashMap<>();
 
-        if (opponent == null) {
+        if (opponent.getId() == null || opponent.getShips().size() == 0 || this.getShips().size() == 0) {
             hits.put("self", new ArrayList<>());
             hits.put("opponent", new ArrayList<>());
         }
         else {
-            hits.put("self",    this.hitsBarcos());
+            hits.put("self", this.hitsBarcos());
             hits.put("opponent", opponent.hitsBarcos());
         }
-
         dto.put("hits", hits);
          return dto;
     }

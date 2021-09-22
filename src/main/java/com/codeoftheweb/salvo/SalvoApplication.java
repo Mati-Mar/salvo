@@ -102,7 +102,7 @@ public class SalvoApplication {
 			shipRepository.save(ship1);
 			Ship ship3 = new Ship("submarine",gamePlayer1,Arrays.asList("C1","C2","C3"));
 			shipRepository.save(ship3);
-			Ship ship2 = new Ship("battleship ",gamePlayer1, Arrays.asList("B1","B2","B3","B4"));
+			Ship ship2 = new Ship("battleship",gamePlayer1, Arrays.asList("B1","B2","B3","B4"));
 			shipRepository.save(ship2);
 			Ship ship4 = new Ship("destroyer",gamePlayer1,Arrays.asList("D1","D2","D3"));
 			shipRepository.save(ship4);
@@ -113,7 +113,7 @@ public class SalvoApplication {
 			shipRepository.save(ship6);
 			Ship ship7 = new Ship("submarine",gamePlayer2,Arrays.asList("C1","C2","C3"));
 			shipRepository.save(ship7);
-			Ship ship8 = new Ship("battleship ",gamePlayer2, Arrays.asList("B1","B2","B3","B4"));
+			Ship ship8 = new Ship("battleship",gamePlayer2, Arrays.asList("B1","B2","B3","B4"));
 			shipRepository.save(ship8);
 			Ship ship9 = new Ship("destroyer",gamePlayer2,Arrays.asList("D1","D2","D3"));
 			shipRepository.save(ship9);
