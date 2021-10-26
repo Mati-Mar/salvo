@@ -36,6 +36,8 @@ public class SalvoController {
     @Autowired
     private SalvoRepository salvoRepository;
 
+    @Autowired
+    private ScoreRepository scoreRepository;
     private boolean isGuest(Authentication authentication) {
         return authentication == null || authentication instanceof AnonymousAuthenticationToken;
     }
@@ -125,23 +127,31 @@ public class SalvoController {
     }
 
     @RequestMapping("/game_view/{nn}")
-    public ResponseEntity<Map<String, Object>> findGamePlayer(@PathVariable Long nn,
-                                                              Authentication authentication) {
-
+    public ResponseEntity<Map<String,Object>> findGamePlayer(@PathVariable Long nn, Authentication authentication) {
         Optional<GamePlayer> gamePlayer = gamePlayerRepository.findById(nn);
-
-        if (!gamePlayer.isPresent()) {
-            return new ResponseEntity<>(makeMap("error", "No exsite ese gamePlayer"), HttpStatus.UNAUTHORIZED);
+        if (gamePlayer.isEmpty()) {
+            return new ResponseEntity<>(makeMap("error", "No existe el gamePlayer"), HttpStatus.UNAUTHORIZED);
         } else {
             if (gamePlayer.get().getPlayer().getId() != playerRepository.findByUserName(authentication.getName()).getId()) {
-                return new ResponseEntity<>(makeMap("error", "No hagas trampa"), HttpStatus.UNAUTHORIZED);
+                return new ResponseEntity<>(makeMap("error", "No hacer trampa, programador pilluelo"), HttpStatus.UNAUTHORIZED);
             } else {
+                if (gamePlayer.get().gameState().equals("WON")) {
+                    Score score = new Score(1D, LocalDateTime.now(), gamePlayer.get().getGame(), gamePlayer.get().getPlayer());
+                    scoreRepository.save(score);
+                } else if (gamePlayer.get().gameState().equals("TIE")) {
+                    Score score = new Score(0.5D, LocalDateTime.now(), gamePlayer.get().getGame(), gamePlayer.get().getPlayer());
+                    scoreRepository.save(score);
+                } else if (gamePlayer.get().gameState().equals("LOST")) {
+                    Score score = new Score(0D, LocalDateTime.now(), gamePlayer.get().getGame(), gamePlayer.get().getPlayer());
+                    scoreRepository.save(score);
+                }
                 return new ResponseEntity<>(gamePlayer.get().makeGameViewDTO(), HttpStatus.ACCEPTED);
             }
         }
     }
 
-    @PostMapping("/games/players/{nn}/ships")
+
+        @PostMapping("/games/players/{nn}/ships")
     public ResponseEntity<Map<String, Object>> placeShips(Authentication authentication,
                                                           @PathVariable Long nn,
                                                           @RequestBody List<Ship> ships) {

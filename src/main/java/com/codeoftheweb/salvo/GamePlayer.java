@@ -113,19 +113,17 @@ public class GamePlayer {
         return map;
     }
 
-    private String gameState() {
-//            WAITINGFOROPP,
-//            WAIT,
-//            PLAY,
-//            PLACESHIPS,
-//            WON,
-//            LOST,
-//            TIE,
-//            UNDEFINED
+    public GamePlayer getOpponent(){
 
+        Game currentGame = this.getGame();
 
-        String gameState= "UNDEFINED" ;
+        GamePlayer opponent = currentGame.getGamePlayers().stream()
+                .filter(gp -> gp.getId() != this.getId()).findFirst().orElse(null);
+        return opponent;
+    }
 
+    public String gameState() {
+        String gameState= "UNDEFINED";
 
         GamePlayer opponent = this.getOpponent();
 
@@ -133,20 +131,61 @@ public class GamePlayer {
         GamePlayer gamePlayer1= this.getGame().getGamePlayers().stream().min(Comparator.comparing(gp -> gp.getId())).get();
         GamePlayer gamePlayer2= this.getGame().getGamePlayers().stream().max(Comparator.comparing(gp -> gp.getId())).get();
 
-        if (opponent == null) {
-            gameState = "WAITINGFOROPP";
-            return gameState;
-        }
         if (this.getShips().size() != 5) {
             gameState = "PLACESHIPS";
             return gameState;
         }
 
-        //AGREGAR ESTADOS DE WIN, LOSE, ETC
+        if (opponent == null) {
+            gameState = "WAITINGFOROPP";
+            return gameState;
+        }
 
         if (opponent.getShips().size() != 5) {
             gameState = "WAIT";
             return gameState;
+        }
+
+        // TIE, WIN Y LOST STATE
+
+        if (this.getId()==gamePlayer1.getId()){
+            if (this.barcosHundidos(opponent, this)){
+                if (gamePlayer1.getSalvos().size()>opponent.getSalvos().size()){
+                    gameState =  "WAIT";
+                    return gameState;
+                }
+                else if (this.barcosHundidos(this,opponent)){
+                    gameState =  "TIE";
+                    return gameState;
+
+                }
+                else {
+                    gameState =  "WON";
+                    return gameState;
+                }
+            }
+            if (this.barcosHundidos(this,opponent)){
+                gameState =  "LOST";
+                return gameState;
+            }
+        }
+        else {
+            if(this.barcosHundidos(opponent,this)){
+                if (this.barcosHundidos(this,opponent)){
+                    gameState = "TIE";
+                    return gameState;
+                }
+                else {
+                    gameState = "WON";
+                    return gameState;
+                }
+            }
+            if(this.barcosHundidos(this,opponent)){
+                if (gamePlayer1.getSalvos().size()==gamePlayer2.getSalvos().size()){
+                    gameState = "LOST";
+                    return gameState;
+                }
+            }
         }
 
         if (this.getShips().size() == 5 && opponent.getShips().size() == 5) {
@@ -158,7 +197,6 @@ public class GamePlayer {
                     gameState = "PLAY";
                     return gameState;
                 }
-
                 else {
                     //Si no tenemos el mismo turno hay que esperar hasta que el oponente juegue.
                     gameState = "WAIT";
@@ -181,78 +219,13 @@ public class GamePlayer {
             }
         }
 
-
-        // TIE, WIN Y LOST STATE
-
-        if (this.getId()==gamePlayer1.getId()){
-            if (this.barcosHundidos(opponent, this)){
-                if (gamePlayer1.getSalvos().size()>gamePlayer2.getSalvos().size()){
-                    gameState =  "WAIT";
-                    return gameState;
-                }
-                else if (this.barcosHundidos(this,opponent)){
-                    gameState =  "TIE";
-                    return gameState;
-                }
-                else {
-                    gameState =  "WON";
-                    return gameState;
-                }
-            }
-            if (this.barcosHundidos(this,opponent)){
-                gameState =  "LOST";
-                return gameState;
-            }
-        }
-        else {
-            if(this.barcosHundidos(opponent,this)){
-                if (this.barcosHundidos(this,opponent)){
-                    gameState = "TIE";
-                    return gameState;
-                }
-                else {
-                    gameState = "WIN";
-                    return gameState;
-                }
-            }
-            if(this.barcosHundidos(this,opponent)){
-                if (gamePlayer1.getSalvos().size()==gamePlayer2.getSalvos().size()){
-                    gameState = "LOST";
-                    return gameState;
-                }
-            }
-        }
-
-
-
-
-        if (gamePlayer1.getId() > gamePlayer2.getId()) {
-            gameState = "WAIT";
-            return gameState;
-        }
-
-        else {
-            gameState = "PLAY";
-            return gameState;
-        }
-
-        //FALTAN ESTADOS POR AGREGAR COMO EL UNDEFINED Y ADEMAS HAY QUE PROBARLOS
-
-
+        return gameState;
     }
 
-    public GamePlayer getOpponent() {
-        GamePlayer opponent = this.getGame().getGamePlayers()
-                .stream()
-                .filter(gp -> gp.getId() != this.getId())
-                .findFirst().orElse(new GamePlayer());
-        return opponent;
-    }
+
 
     private boolean barcosHundidos(GamePlayer gpBarcos, GamePlayer gpSalvos) {
     //Primero envio los barcos que tengo en la lista, y después mando los tiros que hizo el otro GP
-
-        GamePlayer opponent = this.getOpponent();
 
         if (!gpBarcos.getShips().isEmpty() && !gpSalvos.getSalvos().isEmpty()) {
             return  gpSalvos.getSalvos()
@@ -397,7 +370,7 @@ public class GamePlayer {
 
         Map<String, Object> hits = new LinkedHashMap<>();
 
-        if (opponent.getId() == null || opponent.getShips().size() == 0 || this.getShips().size() == 0) {
+        if (opponent == null || opponent.getShips().size() != 5 || this.getShips().size() != 5) {
             hits.put("self", new ArrayList<>());
             hits.put("opponent", new ArrayList<>());
         }
